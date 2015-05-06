@@ -1,0 +1,21 @@
+- name: Ensure local certs directory exists
+  file: state=directory path=/usr/local/share/ca-certificates
+
+#- name: Check for local certs to be installed
+#  local_action: stat path=cert_files
+#  register: cert_files
+#  failed_when: False
+
+- name: Install certs from cert_files variable
+  copy: src={{ item }} dest=/usr/local/share/ca-certificates/{{ item }}
+  with_items: cert_files
+#  when: not cert_files
+
+- name: Install certs from files/certs/
+  copy: src={{ item }} dest=/usr/local/share/ca-certificates/{{ item }}
+  with_fileglob:
+    - files/certs/*.crt
+
+- name: Update cert index
+  # FIXME: Check the changed status. It is always changed, but it shouldn't
+  shell: /usr/sbin/update-ca-certificates
