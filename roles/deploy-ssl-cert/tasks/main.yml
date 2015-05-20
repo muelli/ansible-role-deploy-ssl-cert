@@ -19,3 +19,5 @@
 - name: Update cert index
   # FIXME: Check the changed status. It is always changed, but it shouldn't
   shell: /usr/sbin/update-ca-certificates
+  register: update_certs_result
+  changed_when: "'0 added, 0 removed' not in update_certs_result.stdout"
